@@ -5,8 +5,8 @@ import "./globals.css";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "NotAPrint — Premium Branded Merchandise",
-  description: "High-quality branded merchandise for businesses. Upload your logo, see instant mockups, order in bulk. Premium products, exceptional quality.",
+  title: "NotAPrint — Custom Printing & Merchandise",
+  description: "Custom printing, merchandise, and branded products. Quality prints, fast turnaround.",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

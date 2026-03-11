@@ -2,77 +2,23 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { useState } from "react";
 
 export function Header() {
-  const [productsOpen, setProductsOpen] = useState(false);
-
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-100">
+    <header className="fixed top-0 left-0 right-0 z-50 bg-white border-b border-gray-200">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
-          {/* Logo */}
           <Link href="/" className="flex items-center">
-            <Image
-              src="/logo.png"
-              alt="NotAPrint"
-              width={120}
-              height={40}
-              className="h-10 w-auto"
-              priority
-            />
+            <Image src="/logo.png" alt="NotAPrint" width={120} height={40} className="h-10 w-auto" priority />
           </Link>
-
-          {/* Navigation */}
           <nav className="hidden md:flex items-center gap-8">
-            {/* Products Dropdown */}
-            <div 
-              className="relative"
-              onMouseEnter={() => setProductsOpen(true)}
-              onMouseLeave={() => setProductsOpen(false)}
-            >
-              <button className="flex items-center gap-1 text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors">
-                Products
-                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                </svg>
-              </button>
-              
-              {productsOpen && (
-                <div className="absolute top-full left-0 mt-2 w-56 bg-white rounded-xl shadow-lg border border-gray-100 py-2">
-                  <Link href="/products/express" className="block px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 hover:text-indigo-600 transition-colors">
-                    <span className="font-semibold">Express</span>
-                    <span className="block text-xs text-gray-500 mt-0.5">Instant mockups, fast delivery</span>
-                  </Link>
-                  <Link href="/products/bespoke" className="block px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 hover:text-indigo-600 transition-colors">
-                    <span className="font-semibold">Bespoke</span>
-                    <span className="block text-xs text-gray-500 mt-0.5">Custom orders, premium quality</span>
-                  </Link>
-                  <div className="border-t border-gray-100 my-1"></div>
-                  <Link href="/products" className="block px-4 py-2 text-sm text-gray-600 hover:bg-gray-50 hover:text-indigo-600 transition-colors">
-                    All Products
-                  </Link>
-                </div>
-              )}
-            </div>
-
-            <Link href="/how-it-works" className="text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors">
-              How It Works
-            </Link>
-            <Link href="/about" className="text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors">
-              About
-            </Link>
-            <Link href="/contact" className="text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors">
-              Contact
-            </Link>
+            <Link href="/products" className="text-sm font-medium text-gray-600 hover:text-gray-900">Products</Link>
+            <Link href="/services" className="text-sm font-medium text-gray-600 hover:text-gray-900">Services</Link>
+            <Link href="/about" className="text-sm font-medium text-gray-600 hover:text-gray-900">About</Link>
+            <Link href="/contact" className="text-sm font-medium text-gray-600 hover:text-gray-900">Contact</Link>
           </nav>
-
-          {/* CTA */}
-          <Link 
-            href="/products" 
-            className="inline-flex items-center justify-center px-5 py-2.5 text-sm font-semibold text-white bg-indigo-600 rounded-full hover:bg-indigo-700 transition-colors"
-          >
-            Start Designing
+          <Link href="/quote" className="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-lg hover:bg-indigo-700">
+            Get a Quote
           </Link>
         </div>
       </div>
