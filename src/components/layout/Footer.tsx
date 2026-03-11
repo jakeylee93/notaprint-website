@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 
 export function Footer() {
   return (
@@ -7,11 +8,15 @@ export function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* Brand */}
           <div className="col-span-1 md:col-span-2">
-            <span className="text-2xl font-bold text-white tracking-tight">
-              NotA<span className="text-indigo-400">Print</span>
-            </span>
+            <Image
+              src="/logo.png"
+              alt="NotAPrint"
+              width={140}
+              height={47}
+              className="h-12 w-auto brightness-0 invert"
+            />
             <p className="mt-4 text-sm text-gray-400 max-w-sm">
-              Premium branded merchandise for businesses that care about quality. 
+              Premium branded merchandise for businesses that care about quality.
               Upload your logo, see instant mockups, order with confidence.
             </p>
           </div>

@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 
 export function Header() {
   return (
@@ -9,9 +10,14 @@ export function Header() {
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <Link href="/" className="flex items-center">
-            <span className="text-2xl font-bold text-gray-900 tracking-tight">
-              NotA<span className="text-indigo-600">Print</span>
-            </span>
+            <Image
+              src="/logo.png"
+              alt="NotAPrint"
+              width={120}
+              height={40}
+              className="h-10 w-auto"
+              priority
+            />
           </Link>
 
           {/* Navigation */}
