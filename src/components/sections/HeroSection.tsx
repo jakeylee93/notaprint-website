@@ -3,102 +3,108 @@
 import { motion } from "framer-motion";
 import Link from "next/link";
 
-const MOCKUPS = [
-  { label: "T-Shirt", symbol: "👕", delay: 0 },
-  { label: "Mug", symbol: "☕", delay: 0.15 },
-  { label: "Pen", symbol: "🖊️", delay: 0.3 },
-];
-
 export function HeroSection() {
   return (
-    <section className="relative min-h-[108vh] overflow-hidden bg-[#070d1a] text-white">
-      <div className="absolute -left-32 top-20 h-96 w-96 rounded-full bg-cyan-500/20 blur-[140px]" />
-      <div className="absolute -right-20 bottom-20 h-[28rem] w-[28rem] rounded-full bg-blue-500/20 blur-[150px]" />
-      <div className="absolute inset-x-0 top-0 h-72 bg-gradient-to-b from-white/10 to-transparent" />
+    <section className="relative min-h-screen flex items-center overflow-hidden bg-[#0a0f1c]">
+      {/* Background video */}
+      <video
+        autoPlay
+        muted
+        loop
+        playsInline
+        className="absolute inset-0 w-full h-full object-cover opacity-30"
+      >
+        <source src="/hero-bg.mp4" type="video/mp4" />
+      </video>
 
-      <div className="relative z-10 mx-auto grid min-h-[108vh] max-w-7xl items-center gap-12 px-4 pb-24 pt-32 sm:px-6 lg:grid-cols-2 lg:px-8">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.65 }}
-          className="max-w-xl"
-        >
-          <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-cyan-400/25 bg-cyan-400/10 px-4 py-2 text-sm text-cyan-300 backdrop-blur-sm">
-            <span className="h-2 w-2 rounded-full bg-cyan-300" />
-            Instant Mockups + Tiered Pricing
-          </div>
+      {/* Gradient overlays */}
+      <div className="absolute inset-0 bg-gradient-to-r from-[#0a0f1c] via-[#0a0f1c]/80 to-transparent" />
+      <div className="absolute inset-0 bg-gradient-to-t from-[#0a0f1c] via-transparent to-[#0a0f1c]/60" />
 
-          <h1 className="text-5xl font-semibold leading-[1.02] sm:text-6xl lg:text-7xl">
-            Your Logo.
-            <span className="block bg-gradient-to-r from-cyan-300 to-blue-300 bg-clip-text text-transparent">
-              Every Product.
+      {/* Content */}
+      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full pt-24">
+        <div className="max-w-2xl">
+          {/* Simple badge */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            className="inline-flex items-center gap-2 px-4 py-2 bg-cyan-500/10 border border-cyan-500/20 rounded-full text-cyan-400 text-sm font-medium mb-8"
+          >
+            <span className="w-2 h-2 bg-cyan-400 rounded-full animate-pulse" />
+            Upload Logo. Instant Mockup.
+          </motion.div>
+
+          {/* Heading — simple and direct */}
+          <motion.h1
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.1 }}
+            className="text-5xl sm:text-6xl lg:text-7xl font-bold text-white leading-[1.05] mb-6"
+          >
+            Your logo on{" "}
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-400">
+              any product
             </span>
-          </h1>
+          </motion.h1>
 
-          <p className="mt-6 max-w-lg text-lg leading-relaxed text-slate-300">
-            Upload your design once and preview it across merchandise, print, and large-format products in one clean workflow.
-          </p>
+          {/* Subtitle */}
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.2 }}
+            className="text-white/50 text-lg sm:text-xl mb-10 leading-relaxed max-w-lg"
+          >
+            Upload your design. Pick your products. See instant mockups. We print and deliver.
+          </motion.p>
 
-          <div className="mt-10 flex flex-col gap-4 sm:flex-row sm:items-center">
+          {/* CTAs */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.3 }}
+            className="flex flex-col sm:flex-row gap-4"
+          >
             <Link
               href="#upload"
-              className="inline-flex items-center justify-center gap-2 rounded-2xl bg-cyan-500 px-8 py-4 text-base font-semibold text-white shadow-lg shadow-cyan-500/30 transition hover:bg-cyan-400"
+              className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-cyan-500 hover:bg-cyan-400 text-white text-lg font-semibold rounded-2xl transition-all duration-200 shadow-lg shadow-cyan-500/25 hover:shadow-cyan-500/40"
             >
-              Upload Your Logo
-              <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" />
               </svg>
+              Upload Your Logo
             </Link>
             <Link
               href="#products"
-              className="inline-flex items-center justify-center rounded-2xl border border-white/20 px-8 py-4 text-base font-medium text-white/90 transition hover:bg-white/10"
+              className="inline-flex items-center justify-center px-8 py-4 border border-white/20 text-white hover:bg-white/5 text-lg font-medium rounded-2xl transition-all duration-200"
             >
-              Explore Products
+              Browse Products
             </Link>
-          </div>
-        </motion.div>
+          </motion.div>
 
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.75, delay: 0.1 }}
-          className="relative"
-        >
-          <div className="rounded-3xl border border-white/15 bg-white/10 p-6 shadow-2xl shadow-black/35 backdrop-blur-xl sm:p-8">
-            <div className="mb-5 flex items-center justify-between">
-              <p className="text-sm text-white/70">Live Product Mockup</p>
-              <p className="text-sm font-medium text-cyan-300">Logo Area Preview</p>
-            </div>
-
-            <div className="grid gap-4 sm:grid-cols-3">
-              {MOCKUPS.map((item) => (
-                <motion.div
-                  key={item.label}
-                  animate={{ y: [0, -8, 0] }}
-                  transition={{ duration: 4.5, repeat: Infinity, delay: item.delay, ease: "easeInOut" }}
-                  className="rounded-2xl border border-white/20 bg-[#0b1428]/80 p-4"
-                >
-                  <div className="mb-3 flex items-center justify-between text-sm text-white/80">
-                    <span>{item.label}</span>
-                    <span>{item.symbol}</span>
-                  </div>
-                  <div className="flex aspect-square items-center justify-center rounded-xl border-2 border-dashed border-cyan-300/60 bg-white/5 text-xs uppercase tracking-[0.2em] text-cyan-200">
-                    Your Logo
-                  </div>
-                </motion.div>
-              ))}
-            </div>
-
-            <div className="mt-5 flex flex-wrap items-center gap-3 text-xs text-white/70">
-              <span className="rounded-full border border-white/20 px-3 py-1">No setup fee</span>
-              <span className="rounded-full border border-white/20 px-3 py-1">Fast UK delivery</span>
-              <span className="rounded-full border border-white/20 px-3 py-1">100+ SKUs</span>
-            </div>
-          </div>
-        </motion.div>
+          {/* Quick stats */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 1, delay: 0.6 }}
+            className="flex gap-8 mt-14"
+          >
+            {[
+              { value: "100+", label: "Products" },
+              { value: "24hr", label: "Turnaround" },
+              { value: "UK", label: "Based" },
+            ].map((stat) => (
+              <div key={stat.label}>
+                <div className="text-white font-bold text-xl">{stat.value}</div>
+                <div className="text-white/30 text-sm">{stat.label}</div>
+              </div>
+            ))}
+          </motion.div>
+        </div>
       </div>
 
-      <div className="absolute bottom-0 left-0 right-0 h-28 bg-gradient-to-t from-white to-transparent" />
+      {/* Bottom fade to white */}
+      <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-white to-transparent" />
     </section>
   );
 }
