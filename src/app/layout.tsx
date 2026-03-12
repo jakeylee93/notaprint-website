@@ -1,20 +1,18 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { DM_Sans } from "next/font/google";
 import "./globals.css";
 
-const inter = Inter({ subsets: ["latin"] });
+const dmSans = DM_Sans({ subsets: ["latin"], variable: "--font-dm-sans" });
 
 export const metadata: Metadata = {
-  title: "NotAPrint — Custom Printing & Merchandise",
-  description: "Custom printing, merchandise, and branded products. Quality prints, fast turnaround.",
+  title: "NotAPrint — Custom Printing & Branded Merchandise",
+  description: "Upload your logo, pick your products, we print and deliver. Custom merchandise, large format printing, and business stationery. Quality you can trust.",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className="scroll-smooth">
-      <body className={`${inter.className} antialiased bg-white text-gray-900`}>
-        {children}
-      </body>
+    <html lang="en">
+      <body className={`${dmSans.variable} font-sans antialiased`}>{children}</body>
     </html>
   );
 }

@@ -1,146 +1,100 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useRef } from "react";
+import { motion } from "framer-motion";
 import Image from "next/image";
-import Link from "next/link";
 
-const products = [
-  { id: 1, name: "Bamboo Stylus Pen", price: "£1.85", image: "/product-1.png", category: "Express" },
-  { id: 2, name: "RPET Cooler Bag", price: "£5.22", image: "/product-2.jpg", category: "Express" },
-  { id: 3, name: "Bamboo Lunch Box", price: "£6.26", image: "/product-3.jpg", category: "Express" },
-  { id: 4, name: "Wooden Ball Pen", price: "£11.81", image: "/product-4.jpg", category: "Express" },
-  { id: 5, name: "Bamboo Basic Pen", price: "£0.30", image: "/product-5.jpg", category: "Express" },
-  { id: 6, name: "Custom T-Shirt", price: "From £8.50", image: "/product-1.png", category: "Bespoke" },
+const PRODUCTS = [
+  { name: "Bamboo Stylus Pen", price: "£0.58", image: "/products/pen.png" },
+  { name: "RPET Cooler Bag", price: "£5.22", image: "/products/orca-rpet-cooler.png" },
+  { name: "Bamboo Lunch Box", price: "£6.26", image: "/products/double-stacked-bamboo.png" },
+  { name: "Wood Ball Pen", price: "£11.81", image: "/products/unique-wood-ball.png" },
+  { name: "Basic Ball Pen", price: "£0.30", image: "/products/bamboo-basic-ball.png" },
+  { name: "Bamboo Stylus Pen", price: "£1.85", image: "/products/pen.png" },
+  { name: "Custom Tote Bag", price: "£2.50", image: "/products/orca-rpet-cooler.png" },
+  { name: "Custom T-Shirt", price: "£8.99", image: "/products/double-stacked-bamboo.png" },
 ];
 
 export function ProductCarousel() {
   const scrollRef = useRef<HTMLDivElement>(null);
-  const [canScrollLeft, setCanScrollLeft] = useState(false);
-  const [canScrollRight, setCanScrollRight] = useState(true);
-
-  const checkScroll = () => {
-    if (scrollRef.current) {
-      const { scrollLeft, scrollWidth, clientWidth } = scrollRef.current;
-      setCanScrollLeft(scrollLeft > 0);
-      setCanScrollRight(scrollLeft < scrollWidth - clientWidth - 10);
-    }
-  };
-
-  useEffect(() => {
-    checkScroll();
-    const el = scrollRef.current;
-    if (el) {
-      el.addEventListener("scroll", checkScroll);
-      return () => el.removeEventListener("scroll", checkScroll);
-    }
-  }, []);
 
   const scroll = (direction: "left" | "right") => {
     if (scrollRef.current) {
-      const scrollAmount = 340;
-      scrollRef.current.scrollBy({
-        left: direction === "left" ? -scrollAmount : scrollAmount,
-        behavior: "smooth",
-      });
+      const amount = direction === "left" ? -320 : 320;
+      scrollRef.current.scrollBy({ left: amount, behavior: "smooth" });
     }
   };
 
   return (
-    <section className="py-24 bg-white overflow-hidden">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Header */}
-        <div className="flex items-end justify-between mb-12">
+    <section id="products" className="py-24 px-4 sm:px-6 lg:px-8 bg-white">
+      <div className="max-w-7xl mx-auto">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+          className="flex items-end justify-between mb-12"
+        >
           <div>
-            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
-              Featured Products
-            </h2>
-            <p className="text-lg text-gray-600 max-w-xl">
-              Premium eco-friendly merchandise ready for your brand
+            <p className="text-cyan-500 text-sm font-semibold uppercase tracking-[0.2em] mb-3">
+              Ready to Brand
             </p>
+            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900">
+              Popular Products
+            </h2>
+            <p className="text-gray-500 mt-2">Blank products waiting for your logo</p>
           </div>
-          
-          {/* Navigation Arrows */}
-          <div className="hidden sm:flex gap-2">
+          <div className="hidden sm:flex items-center gap-2">
             <button
               onClick={() => scroll("left")}
-              disabled={!canScrollLeft}
-              className={`p-3 rounded-full border transition-all ${
-                canScrollLeft
-                  ? "border-gray-300 hover:border-gray-400 hover:bg-gray-50"
-                  : "border-gray-200 opacity-50 cursor-not-allowed"
-              }`}
+              className="p-3 rounded-xl border border-gray-200 hover:border-gray-300 hover:bg-gray-50 transition-all"
+              aria-label="Scroll left"
             >
-              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+              <svg className="w-5 h-5 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
               </svg>
             </button>
             <button
               onClick={() => scroll("right")}
-              disabled={!canScrollRight}
-              className={`p-3 rounded-full border transition-all ${
-                canScrollRight
-                  ? "border-gray-300 hover:border-gray-400 hover:bg-gray-50"
-                  : "border-gray-200 opacity-50 cursor-not-allowed"
-              }`}
+              className="p-3 rounded-xl border border-gray-200 hover:border-gray-300 hover:bg-gray-50 transition-all"
+              aria-label="Scroll right"
             >
-              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              <svg className="w-5 h-5 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
               </svg>
             </button>
           </div>
-        </div>
+        </motion.div>
 
         {/* Carousel */}
         <div
           ref={scrollRef}
-          className="flex gap-6 overflow-x-auto scrollbar-hide pb-4 -mx-4 px-4 sm:-mx-0 sm:px-0"
-          style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
+          className="flex gap-6 overflow-x-auto no-scrollbar pb-4 snap-x snap-mandatory"
         >
-          {products.map((product) => (
-            <div
-              key={product.id}
-              className="flex-shrink-0 w-72 group"
+          {PRODUCTS.map((product, i) => (
+            <motion.div
+              key={`${product.name}-${i}`}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: i * 0.08 }}
+              className="flex-shrink-0 w-[260px] snap-start group cursor-pointer"
             >
-              {/* Image Container */}
-              <div className="relative aspect-square bg-gray-100 rounded-2xl overflow-hidden mb-4">
+              {/* Product image */}
+              <div className="bg-gray-50 rounded-2xl p-8 mb-4 aspect-square flex items-center justify-center group-hover:bg-gray-100 transition-colors duration-300 overflow-hidden">
                 <Image
                   src={product.image}
                   alt={product.name}
-                  fill
-                  className="object-cover group-hover:scale-105 transition-transform duration-500"
+                  width={200}
+                  height={200}
+                  className="object-contain w-full h-full group-hover:scale-105 transition-transform duration-300"
                 />
-                {/* Category Badge */}
-                <span className="absolute top-4 left-4 px-3 py-1 text-xs font-medium bg-white/90 backdrop-blur-sm rounded-full">
-                  {product.category}
-                </span>
-                {/* Hover Overlay */}
-                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300" />
               </div>
 
-              {/* Info */}
-              <div className="space-y-2">
-                <h3 className="font-semibold text-gray-900 group-hover:text-indigo-600 transition-colors">
-                  {product.name}
-                </h3>
-                <p className="text-lg font-bold text-gray-900">{product.price}</p>
-                <Link
-                  href="/quote"
-                  className="inline-flex items-center text-sm font-medium text-indigo-600 hover:text-indigo-700"
-                >
-                  Upload Logo
-                  <svg className="ml-1 w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                  </svg>
-                </Link>
-              </div>
-            </div>
-          ))}
-        </div>
-
-        {/* Mobile Scroll Indicator */}
-        <div className="flex justify-center gap-2 mt-6 sm:hidden">
-          {products.map((_, i) => (
-            <div key={i} className="w-2 h-2 rounded-full bg-gray-300" />
+              {/* Product info */}
+              <h3 className="font-semibold text-gray-900 mb-1">{product.name}</h3>
+              <p className="text-gray-500 text-sm">from <span className="text-gray-900 font-semibold">{product.price}</span></p>
+            </motion.div>
           ))}
         </div>
       </div>
