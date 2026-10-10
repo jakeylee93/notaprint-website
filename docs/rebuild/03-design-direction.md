@@ -138,7 +138,9 @@ The same customer logo is used throughout. With no upload, a tasteful **"Your lo
   - Bounded zoom (0.8–1.8×) and polar clamp (no looking up from beneath the mug).
   - Double-tap or `0` resets.
   - Keyboard: arrows rotate 15°, `+`/`-` zoom.
+  - Discreet text buttons ("Front · Back · Wrap · Reset") give a single-pointer alternative to dragging (WCAG 2.5.7).
   - A **Flat proof** toggle.
+  - On phones the viewer isn't full-bleed, so the page keeps scrolling past it.
 - **Panel:**
   - name and verified specs;
   - **colour** (only real SKUs);
@@ -164,7 +166,7 @@ The same customer logo is used throughout. With no upload, a tasteful **"Your lo
 
 | Element | Behaviour |
 |---|---|
-| Orbit | Damping about 0.08–0.12, rotate speed about 0.6, inertia from damping only (no physics engine). Auto-rotate off. |
+| Orbit | camera-controls with `smoothTime` about 0.25–0.35 s. It is frame-rate independent, so it feels the same at 60 and 120 Hz. Inertia comes from damping only (no physics engine). Auto-rotate off. Preset views (front, back, wrap) animate via `rotateTo`. |
 | Object transitions | 600–900 ms, `cubic-bezier(0.22, 1, 0.36, 1)`, shadow continuity, no bounce |
 | Colour change | 250 ms material crossfade |
 | Logo apply | 300 ms ink reveal along the print surface |

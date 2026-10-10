@@ -366,4 +366,94 @@ Labels used here: **[V]** verified on an official page, a spec, or a live unauth
 
 ## F. 3D configurator pipeline
 
-*(Lane still running when this file was first written. Section appended below on completion.)*
+**Decals vs UV-space print areas**
+- [V] The DecalGeometry docs say: *"decal projections can be distorted when used around corners"*. Issue #21187 has been open since 2021; the maintainer calls this "a limitation of the used approach".
+- [V] The source gives clipped triangles flat-projected UVs. drei `<Decal>` wraps it, and its "decal box has to intersect the surface".
+- [V] `texture.channel` selects a UV set, and GLTFLoader maps glTF `texCoord` onto it.
+
+**Runtime textures**
+- [V] Call `CanvasTexture.needsUpdate = true` after each redraw. You can't change a texture's size or format after first use; dispose it instead.
+- [V] Colour maps need `SRGBColorSpace`. GLTFLoader sets `flipY=false`, and glTF UV (0,0) is top-left.
+- [V] GPU memory is about w × h × 4 × 1.33 bytes (a 2048² texture is about 22 MB). PNG and JPEG are uncompressed on the GPU.
+- [V] iOS caps canvases at 4096². OffscreenCanvas has been Baseline since 2023. `createImageBitmap` accepts SVG.
+
+**glTF and compression**
+- [V] glTF uses metres, +Y up and +Z front.
+- [V] These Khronos extensions are ratified: clearcoat, transmission, volume (requires a manifold mesh), sheen, texture_transform, basisu and variants. Variants are meant for premade variants, "not configurators".
+- [V] three.js GLTFLoader supports clearcoat, transmission, volume, ior, texture_transform, basisu, Draco and meshopt natively. Variants need a plugin.
+- [V] `gltf-transform optimize` defaults to meshopt with 2048 textures.
+- [V] Tested on CLI 4.5.1: with default settings, `optimize` **deleted runtime-only UV sets and flattened the hierarchy**. Passing `--prune-attributes false --join false --palette false --flatten false --simplify false` preserves them.
+- [V] Meshopt quantises UVs to 12 bits by default.
+- [V] Decoder sizes measured from the three.js repo: meshopt about 7.7 kB gzipped, Draco about 100 kB, Basis about 260 kB.
+- [V] Khronos 3D Commerce mobile target: 3 MB, 150k triangles, under 20 draw calls, 2K textures.
+
+**Controls, feel and accessibility**
+- [V] OrbitControls damping needs `update()` every frame and isn't scaled by frame time. It sets `touch-action: none`, which blocks page scroll on the canvas.
+- [V] camera-controls offers smooth transitions (`smoothTime` 0.25 s), Promise-based `rotateTo`/`fitToBox`, and `update(delta)`.
+- [V] drei `PresentationControls` uses springs and snap-back. `MathUtils.damp` gives frame-rate-independent damping.
+- [V] Canvas content isn't exposed to assistive technology.
+- [V] WCAG rules that apply:
+  - 2.1.1: keyboard operation.
+  - 2.5.7: a single-pointer alternative to dragging.
+  - 2.2.2: a pause control for motion lasting more than 5 s.
+  - 2.3.3: motion triggered by interaction.
+
+**Performance and renderer**
+- [V] R3F options: `frameloop="demand"`, `invalidate()`, default dpr `[1,2]`, PerformanceMonitor, AdaptiveDpr, and `<View>` for multiple views in one canvas.
+- [V] Chromium force-loses the oldest WebGL context beyond 16.
+- [V] The three.js manual says WebGPURenderer is "still in an experimental state", and that WebGLRenderer is "the recommended choice for pure WebGL 2 applications".
+- [V] `NeutralToneMapping` is "based on the Khronos 3D Commerce Group standard tone mapping". R3F defaults to ACES.
+
+**Scroll animation**
+- [V] GSAP 3.13 blog (29 Apr 2025): "100% FREE including ALL of the bonus plugins". The Standard License allows commercial use except in competing no-code builders.
+- [V] ScrollTrigger `scrub` is either `true` or a number of seconds. `gsap.matchMedia` reverts automatically on `prefers-reduced-motion`.
+- [V] CSS `animation-timeline` has limited browser availability.
+
+**Model licensing**
+- [V] The Sketchfab Store closed on 22 Oct 2024 when Fab launched. Sketchfab's Standard licence bars making assets extractable as stand-alone files. Editorial assets can't be used commercially.
+- [V] TurboSquid requires "proprietary formats" for real-time use.
+- [V] CGTrader's licence is limited to an "Incorporated Product".
+- [V] Poly Haven assets are CC0.
+- [V] UK CDPA s.90: a copyright assignment must be in writing and signed. UK design right protects 3D shape.
+- Have a lawyer review any licence before use.
+
+**Alternative viewer**
+- [V] `<model-viewer>` 4.4.0 offers variants, `createCanvasTexture`, built-in keyboard and screen-reader prompts, poster images, Neutral tone mapping, Draco/KTX2/meshopt and USDZ for iOS AR. Its FAQ says "Probably not" to requests for extra three.js features.
+
+**Sources**
+- https://threejs.org/docs/pages/DecalGeometry.html
+- https://github.com/mrdoob/three.js/issues/21187
+- https://drei.docs.pmnd.rs/abstractions/decal
+- https://threejs.org/docs/pages/CanvasTexture.html
+- https://threejs.org/docs/pages/Texture.html
+- https://threejs.org/manual/pages/color-management.html
+- https://threejs.org/manual/pages/textures.html
+- https://github.com/KhronosGroup/glTF/blob/main/specification/2.0/Specification.adoc
+- https://github.com/KhronosGroup/glTF/tree/main/extensions/2.0/Khronos
+- https://threejs.org/docs/pages/GLTFLoader.html
+- https://threejs.org/docs/pages/KTX2Loader.html
+- https://gltf-transform.dev/cli
+- https://github.com/KhronosGroup/glTF-Validator
+- https://github.com/KhronosGroup/3DC-Asset-Creation
+- https://threejs.org/docs/pages/OrbitControls.html
+- https://github.com/yomotsu/camera-controls
+- https://drei.docs.pmnd.rs/controls/camera-controls
+- https://r3f.docs.pmnd.rs/advanced/scaling-performance
+- https://r3f.docs.pmnd.rs/api/canvas
+- https://drei.docs.pmnd.rs/performances/performance-monitor
+- https://threejs.org/manual/pages/webgpurenderer.html
+- https://developer.mozilla.org/en-US/docs/Web/API/WebGL_API/WebGL_best_practices
+- https://codereview.chromium.org/14217005/
+- https://gsap.com/blog/3-13/
+- https://gsap.com/licensing/
+- https://gsap.com/docs/v3/Plugins/ScrollTrigger/
+- https://gsap.com/docs/v3/GSAP/gsap.matchMedia()/
+- https://www.w3.org/WAI/WCAG22/Understanding/dragging-movements.html
+- https://www.w3.org/WAI/WCAG22/Understanding/pause-stop-hide.html
+- https://sketchfab.com/licenses
+- https://blog.turbosquid.com/royalty-free-license/
+- https://www.cgtrader.com/pages/terms-and-conditions
+- https://polyhaven.com/license
+- https://www.legislation.gov.uk/ukpga/1988/48/section/90
+- https://www.gov.uk/design-right
+- https://modelviewer.dev/docs/

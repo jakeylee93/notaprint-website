@@ -37,7 +37,8 @@ Data: Postgres (catalogue, orders, events) · Object storage (artwork, print fil
 | App | Next.js App Router, React, TypeScript strict | next 16.4.0 · react 19.3.0 |
 | Styling | Tailwind CSS (tokens from [03 · §3](03-design-direction.md#3-type-and-colour-initial-tokens-tested-in-phase-1)) | tailwindcss 4.3.3 |
 | 3D | three.js + @react-three/fiber + drei; camera-controls for transitions | three 0.186.1 · fiber 9.8.1 · drei 10.7.9 · camera-controls 3.1.2 |
-| Scroll choreography | GSAP ScrollTrigger (scrub on native scroll) | gsap 3.15.0 |
+| Scroll choreography | GSAP ScrollTrigger (scrub on native scroll). GSAP has been **free for commercial use, including all plugins, since 3.13 (Apr 2025)**; the licence excludes only competing no-code builders [V] | gsap 3.15.0 |
+| MVP fallback | Google `<model-viewer>`. It offers variants, canvas textures, built-in keyboard and screen-reader prompts, Neutral tone mapping and iOS AR via USDZ [V]. It's a fallback if the R3F build slips; R3F is preferred for the custom placement UI and the scroll hero | model-viewer 4.4.0 |
 | UI motion | Motion (successor package to framer-motion) | motion 14.1.0 |
 | Validation | zod | 4.6.5 |
 | DB | Postgres + Drizzle ORM. The provider is open (Neon via the Vercel Marketplace, or Supabase); see **D9**. | drizzle-orm 0.45.4 |
@@ -54,45 +55,86 @@ Data: Postgres (catalogue, orders, events) · Object storage (artwork, print fil
 
 ### 3.1 Asset contract per product geometry (GLB)
 
-- Real-world scale in metres, `+Y` up, origin at the base centre.
-- Named nodes: `body`, `print_surface_<placement>`, plus `handle`, `lid` and so on where they exist.
-- **Each placement has its own print-surface mesh with a dedicated UV island.** The island maps linearly onto the supplier's print rectangle, with known **mm per UV unit**.
+- glTF conventions [V]: metres, `+Y` up, front facing `+Z`. Origin at the base centre.
+- Named nodes: `body`, `PrintArea_<placement>`, plus `handle`, `lid` and so on where they exist.
+- **Each placement has its own print-area primitive and material**, or a second UV set selected with `texture.channel` (glTF `texCoord` maps to `channel` [V]).
+- Each placement has a dedicated 0–1 UV island whose **aspect ratio equals the physical print area**. The island maps linearly onto the supplier's print template, with known **mm per UV unit**.
   - Mug: an exact cylindrical unwrap, where *u* is the angle across the printable arc and *v* is the height. The handle gap is masked.
   - Pen barrel and bottle wall: the same approach.
   - T-shirt front: a flattened panel island.
 - Material variants: one PBR material per real colour SKU (base colour, roughness, metalness), plus glaze or clear-coat where the product has it.
-- Budgets (proposal):
-  - 20–60k triangles per hero product and 10–30k per catalogue product.
-  - Textures 2k at most (KTX2).
-  - GLB ≤ 1.5 MB, targeting 300–800 kB with meshopt + KTX2.
+- Budgets:
+  - The Khronos 3D Commerce target for a single-item mobile 3D view is **3 MB, 150k triangles, under 20 draw calls, 2K textures** [V].
+  - Ours, tighter: 10–50k triangles per SKU, textures 2K at most (KTX2), GLB ≤ 1.5 MB with a 300–800 kB target.
+- Materials: clear-coat for glazed mugs, sheen for cotton, transmission + volume only for clear bottles (a volume mesh must be manifold) [V]. `MeshPhysicalMaterial` costs more per pixel, so use it only where needed [V].
+- Colourways:
+  - A fixed set of real SKU colours lives in our JSON or variants and is applied via `material.color`.
+  - `KHR_materials_variants` is designed for premade variants and needs a plugin in three.js [V].
 - Validation gates:
   - Khronos glTF-Validator passes with 0 errors.
-  - A custom check confirms each UV island is rectangular and undistorted (stretch < 1% across the island).
+  - `gltf-transform inspect` reports GPU size within budget.
+  - A scripted UV check confirms each island's aspect ratio matches its print area, with stretch < 1%.
   - Physical dimensions match the supplier's specification within ±1 mm.
   - A licence record is attached ([§6](#6-imagery-pipeline-and-provenance)).
+- **Compression caveat (verified by test):** `gltf-transform optimize` defaults **delete UV sets that are only textured at runtime and flatten the node hierarchy**. Use:
+
+  ```
+  gltf-transform optimize in.glb out.glb --compress meshopt --texture-compress ktx2 \
+    --join false --flatten false --palette false --simplify false --prune-attributes false
+  ```
+
+  - Meshopt quantises UVs to 12 bits by default, so check print-area precision after compression.
+  - KTX2 needs KTX-Software installed.
+  - The meshopt decoder is about 8 kB gzipped, against about 100 kB for Draco [V].
+- **Licensing:**
+  - **Commission bespoke meshes with a written, signed copyright assignment** (UK CDPA s.90 [V]).
+  - Stock royalty-free licences are unlikely to fit. TurboSquid requires proprietary formats for real-time web use; CGTrader limits use to an "Incorporated Product"; Sketchfab Standard bars making assets extractable as stand-alone files [V]. A GLB fetched by the browser is an open, downloadable file, so stock models need written permission.
+  - Supplier dimensions are facts. Use supplier drawings or photos only with permission.
+  - Poly Haven HDRIs are CC0 [V].
 
 ### 3.2 Logo on the product
 
 - **Logo composition happens in UV space, not by projected decal.**
-  - Three.js documents that `DecalGeometry` projections stretch on curved or cornered surfaces. That rules them out for mug wraps, bottle labels and pen barrels.
+  - The Three.js docs warn: *"decal projections can be distorted when used around corners"* [V]. The linked issue has been open since 2021, and the maintainer calls it "a limitation of the used approach".
+  - `DecalGeometry` assigns flat-projected UVs inside a projector box [V], so the logo stretches wherever a mug, bottle or pen curves away from the projector. One projection can't produce a 360° wrap.
+  - drei `<Decal>` wraps the same technique [V]. Decals are kept only for small, nearly flat spots.
   - The client instead draws the logo into a print-area canvas sized to the supplier's print rectangle (e.g. N px per mm), preserving aspect ratio and applying the customer's scale and position in **millimetres**.
-  - That canvas is used as a `CanvasTexture` (sRGB colour space, mipmaps, anisotropy) on the print-surface material, layered over the base material with the alpha mask.
+  - That canvas is used as a `CanvasTexture` on the print-area material, layered over the base material with the alpha mask.
+  - Texture settings:
+    - `colorSpace = SRGBColorSpace` [V];
+    - **`flipY = false`** to match glTF UVs, whose origin is top-left [V];
+    - anisotropy at `capabilities.getMaxAnisotropy()`;
+    - `needsUpdate = true` after each redraw [V].
+  - A texture is never resized in place: dispose it and make a new one [V].
+  - The logo is rasterised once into an `ImageBitmap`, then contain-fitted per placement at about 8–12 px/mm.
+  - Caps: 2048 px (1024 on low-end devices), the device `maxTextureSize`, and iOS's 4096² canvas limit [V].
+  - A 2048² RGBA texture with mipmaps uses about 22 MB of GPU memory [V], so an LRU cache disposes textures it evicts.
+  - Logo edges are checked for dark alpha fringes.
 - **The proof uses the very same canvas.** By construction, what the 3D preview shows and what the proof shows are the same pixels mapped differently.
 - **Ink appearance:** a per-technique material response. Printed ink on glaze picks up the glaze's specular. Laser engraving uses a roughness/colour shift with no ink colour. Embroidery is shown as a flat preview plus a note.
 - **Caching:** composed textures are keyed by `(logoHash, printAreaVersion, placement, scale, offset)` and kept in memory and IndexedDB.
 
 ### 3.3 Viewer runtime
 
-- **One WebGL canvas** in the whole app, mounted lazily when a product is opened or the hero enters view.
-- `frameloop="demand"` once interaction settles.
-- DPR clamped to [1, 1.75], with an adaptive downgrade on slow frames.
-- Context-loss handler that remounts and restores state.
-- Controls:
-  - camera-controls or OrbitControls with damping (inertia without a physics engine);
-  - polar clamps and bounded zoom;
-  - keyboard: arrows rotate, `+`/`-` zoom, `0` reset;
-  - touch: one-finger orbit, pinch zoom.
-- Reduced motion: no autoplay and no scrub. Composed stills plus an explicit "Rotate in 3D" button.
+- **One WebGL canvas** in the whole app, mounted lazily when a product is opened or the hero enters view. Chromium force-loses the oldest context beyond 16 [V], so we never create one per card.
+- Rendering:
+  - `frameloop="demand"` [V].
+  - DPR `[1, 1.5]` on mobile and `[1, 2]` on desktop.
+  - drei `PerformanceMonitor` / `AdaptiveDpr` for downgrades [V].
+  - Rendering pauses when off-screen (IntersectionObserver).
+- Context loss: three.js reinitialises the renderer on restore, but our own resources must be recreated [V], so the viewer remounts from state. Tested with `forceContextLoss()`.
+- **Renderer:** WebGLRenderer. The three.js manual still calls WebGPURenderer "experimental" [V].
+- **Tone mapping:** set **`NeutralToneMapping`** (based on the Khronos 3D Commerce standard) instead of R3F's default ACES, for accurate product colour [V]. Use a CC0 HDRI.
+- **Controls:**
+  - **camera-controls** (`smoothTime` about 0.25 s, frame-rate independent via `update(delta)`, Promise-based `rotateTo`/`fitToBox` for preset views) [V].
+  - Not OrbitControls: its damping is applied per `update()` call rather than scaled by frame time, so the feel changes on 120 Hz screens. It also sets `touch-action: none`, which traps page scroll [V].
+  - Polar clamps and bounded zoom.
+- **Accessibility of the canvas:**
+  - Canvas content is invisible to assistive technology [V]. Provide HTML buttons for rotate left/right, zoom, reset and front/back/wrap views, which satisfies WCAG 2.5.7's single-pointer alternative to dragging [V].
+  - Keyboard: arrows rotate, `+`/`-` zoom, `0` reset (WCAG 2.1.1 [V]).
+  - An `aria-live` label announces the current view.
+  - On mobile, avoid a full-width canvas so the page can still scroll.
+- **Reduced motion:** use `gsap.matchMedia('(prefers-reduced-motion: reduce)')` [V]. No autoplay and no scrub; composed stills plus an explicit "Rotate in 3D" button.
 
 ### 3.4 Honest fallback per SKU
 
@@ -227,8 +269,9 @@ Normalised supplier catalogue, versioned mappings, server-trusted quantity prici
 
 ## 12. Sources
 
-- Three.js `DecalGeometry`: https://threejs.org/docs/#examples/en/geometries/DecalGeometry
+- Three.js `DecalGeometry` and its distortion issue: https://threejs.org/docs/pages/DecalGeometry.html · https://github.com/mrdoob/three.js/issues/21187
 - glTF 2.0 and the Khronos validator: https://github.com/KhronosGroup/glTF · https://github.com/KhronosGroup/glTF-Validator
-- glTF-Transform: https://gltf-transform.dev/
+- glTF-Transform: https://gltf-transform.dev/cli
+- Khronos 3D Commerce publishing targets: https://github.com/KhronosGroup/3DC-Asset-Creation
 - Stripe and Printify facts: see [05 · Sources](05-commerce-and-suppliers.md#sources).
 - Detailed 3D pipeline and upload-pipeline sources: see [07 · Research notes](07-research-notes.md).

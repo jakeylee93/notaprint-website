@@ -71,7 +71,7 @@ All checks below were run on 10 Oct 2026 and were **read-only**. No secrets were
 | D11 | Margins, rounding, shipping policy | Proposal workshop in Phase 0 | Phase 0 |
 | D12 | VAT registration and treatment | Accountant confirms; configure Stripe Tax | Phase 4 |
 | D13 | Mailbox provider | Any reputable provider, plus SPF and DMARC | Before launch |
-| D14 | 3D model route per SKU | Commission the hero SKUs, license only with real-time-web rights | Phase 1–2 |
+| D14 | 3D model route per SKU | **Commission** meshes with a written copyright assignment. Stock licences (TurboSquid, CGTrader, Sketchfab Standard) restrict browser-extractable GLBs, so use them only with written permission ([04 · §3.1](04-technical-architecture.md#31-asset-contract-per-product-geometry-glb)) | Phase 1–2 |
 | D15 | Physical samples | Recommended for the mug, pen and bottle (purchase approval) | Phase 1 |
 | D16 | When `main` receives the rebuild | Via PR from a feature branch after Phase 1 review; `main` stays untouched until then | After Phase 1 |
 | D17 | **Repository visibility.** It is currently **public**. The recovered history includes the unlicensed Laltex photos and the stock video, and future commits will hold supplier and margin logic | **Make the repo private** before commercial details are committed. Production secrets never go in git either way | Now |
