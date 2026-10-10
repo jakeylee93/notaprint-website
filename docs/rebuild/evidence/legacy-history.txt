@@ -1,0 +1,11 @@
+27d56a02c51f12784be38f7acb53ec12397b541d  2026-03-12T19:29:52+00:00  fix: video hero background, restore all sections, simpler messaging — Upload Logo, Instant Mockup
+91fc8e02847961b9487b2355668bb3597250c0ca  2026-03-12T18:05:28+00:00  redesign: modern layout, white product backgrounds, pricing tiers, bento grid categories
+6546d569eb3cd2bcc139b022956bdcbd53415a22  2026-03-12T00:49:31+00:00  feat: full homepage redesign — dark hero, how it works, product categories, carousel, upload CTA, trust bar, proper footer
+dc97f9654a847de3d01fff16305cb4effff359ec  2026-03-11T21:30:14+00:00  Add ProductCarousel: 6 products with real images, horizontal scroll, navigation arrows, responsive design
+d65709d8da87d6955915de0435f2497ff5560cf9  2026-03-11T21:26:00+00:00  Add Featured Products section with 4 products and Upload Logo CTAs
+5f338d4a3eb7b5de03e15cffa466aada77a7e623  2026-03-11T20:52:15+00:00  Rebuild homepage with real logo, header, hero, services section, footer
+9a90bf724b9ad49aea9d3ef0052674f282a41d10  2026-03-11T19:57:01+00:00  Add Products dropdown menu and Express vs Bespoke section
+214be92b9c203b310f2bedc505c1c42fedd0ed95  2026-03-11T19:14:25+00:00  Add NotAPrint logo to Header and Footer, save logo to Google Drive
+10dcb03da04ec2085d6a4a909311e41bacb14088  2026-03-11T19:06:59+00:00  Initial homepage layout: Header, Hero, Footer with placeholder branding
+7fe1cbc5f011915a0bf6e96e29b3abbf952a2a11  2026-03-11T18:56:35+00:00  fix: add autoprefixer dependency
+e4256b9ddbfbcb19bb1f23016d4453ac00f9b2b0  2026-03-11T18:55:06+00:00  init: NotAPrint website — Next.js 14, Tailwind, TypeScript
