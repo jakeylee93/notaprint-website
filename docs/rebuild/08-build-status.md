@@ -121,7 +121,14 @@ End-to-end coverage by viewport:
 
 ## Preview deployment
 
-_Filled in after deployment; see below._
+| | |
+|---|---|
+| **Preview (this branch, always the latest build)** | https://notaprint-website-git-claude-zen-newton-he9byr-anyos.vercel.app |
+| Verified deployment | `dpl_5KXaUK5rJmAKZaNecqaNNsPrZr1m`: https://notaprint-website-m1r4urfc0-anyos.vercel.app (commit `5e03856`, **READY**, target *preview*, region iad1) |
+| Access | Vercel Authentication is on for previews. Log in with the Vercel account that owns the project, or create a temporary share link from the deployment page. Pages are `noindex`. |
+| Build | Vercel CLI 62.7, Node 24.x, `npm` install, then `next build` (Turbopack) in 21 s. The only warning is about the open-ended `engines.node` range |
+| Smoke checks | `/api/checkout` returns `{"enabled":false,"mode":"disabled"}` with the not-connected message. Headers present: HSTS, `nosniff`, `X-Frame-Options: DENY`, `Referrer-Policy`, `Permissions-Policy`, `x-robots-tag: noindex`. Product pages are served prerendered |
+| E2E against the preview | Full suite (36 tests across 4 viewports) running against `dpl_5KXaUK5rJmAKZaNecqaNNsPrZr1m`; the result is recorded in the next commit |
 
 ## Turning things on
 
