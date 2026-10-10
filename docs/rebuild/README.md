@@ -1,6 +1,6 @@
-# NotAPrint rebuild: audit and plan
+# Nota Print rebuild: audit, plan and first build
 
-**Status:** research and plan only (10 Oct 2026). Branch `claude/zen-newton-he9byr`. **`main` is untouched**, including its node_modules-only commit `dc7c7f0`.
+**Status:** first working slice built and deployed as a **Vercel preview** (10 Oct 2026). Branch `claude/zen-newton-he9byr`. **Start with [08 · Build status](08-build-status.md)**, which covers what's built, test results, the preview link and launch dependencies. **`main` and production are untouched**, including `main`'s node_modules-only commit `dc7c7f0`. No DNS changes.
 
 This is a plan to rebuild Jake's print, merchandise and POS shop at **notaprint.co.uk** as a premium site. The first screen asks the customer to "Upload your logo". That one logo then appears on real products in true 3D, then the customer proofs and pays. Small orders are made to order (POD); bulk orders go through UK trade suppliers.
 
@@ -39,32 +39,31 @@ This is a plan to rebuild Jake's print, merchandise and POS shop at **notaprint.
 | 05 | [Commerce and suppliers](05-commerce-and-suppliers.md): made-to-order vs trade, data model, pricing, Stripe test design, **Laltex route** | D7, D8, D11, D12 |
 | 06 | [Phased plan](06-phased-plan.md): phases with **acceptance criteria**, mug slice first | D15, D16 |
 | 07 | [Research notes](07-research-notes.md): verified facts and source URLs (Stripe, Printify, Laltex, uploads, Printful, 3D) | n/a |
-| — | [Evidence](evidence/): live-site fold screenshots, the logo source, legacy commit history. No third-party images, because the repo is public | n/a |
+| 08 | [Build status](08-build-status.md): the working preview, honest demo labels, verification results, how to turn on Stripe test, **remaining launch dependencies** | Launch dependencies |
+| — | [Evidence](evidence/): live-site fold screenshots, the logo source, legacy commit history; [`evidence/build/`](evidence/build/) has screenshots and motion contact sheets of the new build, using synthetic logos only. No third-party images, because the repo is public | n/a |
 
-## Decisions needed first (to start Phase 0)
+## Decisions (status after the build go-ahead)
 
 | | |
 |---|---|
-| **D1** | Brand spelling: "NotAPrint", "Nota Print" or "notaprint" |
-| **D3** | NotAPrint vector logo file |
-| **D7** | Approve Printful White Glossy Mug 11 oz for the slice |
-| **D9** | Database: Neon or Supabase |
-| **D11** | Margin, rounding and shipping policy (we can propose defaults) |
-| **D17** | Make this **public** repo private before commercial details land |
-| **Access** | Stripe sandboxes with test keys; Printful API store with a token (no orders) |
+| **D1** | ✅ Brand spelling is **Nota Print** (Jake). An interim typographic wordmark is in use |
+| **D3** | Open: a Nota Print vector logo file, which replaces the interim wordmark |
+| **D7** | ✅ Printful White Glossy Mug approved for the first slice (11 oz and 15 oz, both UK-fulfilled) |
+| **D9** | Open: database (Neon or Supabase). The build runs client-side behind a persistence adapter until then |
+| **D11** | Open: margin, rounding, shipping and VAT policy. The build uses configurable, clearly labelled demo estimates |
+| **D17** | Open: make this **public** repo private before commercial details land |
+| **Access** | Open: Stripe sandbox test keys (checkout is disabled until set); a Printful API token (fulfilment stays a dry run) |
 
 ## Deliberately not done
 
-- No production deployment.
-- No DNS or domain changes.
-- No live Stripe.
-- No supplier orders or drafts.
+- No production deployment and no DNS or domain changes.
+- No live Stripe: live keys are refused by code.
+- No supplier orders or drafts; fulfilment is a dry run.
 - No image or video generation, and no credits spent.
-- No emails sent.
-- No subscriptions.
+- No emails sent, no subscriptions.
 - No scraping of gated trade prices.
 
-`vercel.json` on this branch turns off Vercel builds **for this branch only**. Without it, the docs-only commit would trigger a preview build that fails, exactly as `dc7c7f0` did. Delete the file when a real app lands here.
+The docs-only `vercel.json` guard was **removed** once the app landed, so this branch now builds Vercel **preview** deployments. Production still follows `main`.
 
 ## Restore the legacy site (if ever needed)
 
