@@ -128,7 +128,8 @@ End-to-end coverage by viewport:
 | Access | Vercel Authentication is on for previews. Log in with the Vercel account that owns the project, or create a temporary share link from the deployment page. Pages are `noindex`. |
 | Build | Vercel CLI 62.7, Node 24.x, `npm` install, then `next build` (Turbopack) in 21 s. The only warning is about the open-ended `engines.node` range |
 | Smoke checks | `/api/checkout` returns `{"enabled":false,"mode":"disabled"}` with the not-connected message. Headers present: HSTS, `nosniff`, `X-Frame-Options: DENY`, `Referrer-Policy`, `Permissions-Policy`, `x-robots-tag: noindex`. Product pages are served prerendered |
-| E2E against the preview | Full suite (36 tests across 4 viewports) running against `dpl_5KXaUK5rJmAKZaNecqaNNsPrZr1m`; the result is recorded in the next commit |
+| **E2E against the preview** | Full suite run against `dpl_5KXaUK5rJmAKZaNecqaNNsPrZr1m` through Vercel Authentication, using a temporary share link: **18 passed, 0 failed, 0 flaky, 18 skipped by design**, in 6.9 min. The same matrix as the local run: desktop 9/9; 375: 3 run; 390: 4 run; 430: 2 run. Vercel logged no runtime errors during the run |
+| Note | The small round dark button on the right edge of previews is **Vercel's preview toolbar**, shown to signed-in team members. It isn't part of the site and doesn't appear in production |
 
 ## Turning things on
 
