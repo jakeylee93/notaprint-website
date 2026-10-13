@@ -24,3 +24,11 @@ This project has **no** food, menu, venue, mural or interior imagery, so those p
 
 ## Still pending
 - **A vector master of the Nota mark** (D3). The 300 px source is fine for header and footer sizes but too small for large hero use. **Featuring the mark large is deferred until a vector or larger original is supplied**, because upscaling or tracing it myself would risk drift.
+
+## Verification of this checkpoint (`ce63a62`)
+- Deployed to the testing preview as `dpl_CZiKZMR2aVGRZN6aCZJcYpfEKJoX`: https://notaprint-website-dtzxmmqr8-anyos.vercel.app.
+- Type check, build and 56/56 unit tests pass.
+- Full e2e suite against that deployment: **17 passed, 1 failed, 18 skipped by design**.
+  - The failure was the 390 px low-resolution test, which timed out waiting for the resolution status after upload.
+  - Re-running it once on its own: **passed** (13 s).
+  - The test was not changed, and it passes on desktop and in every earlier run. Treat it as a timing-sensitive test to harden; its root cause has not been confirmed.
