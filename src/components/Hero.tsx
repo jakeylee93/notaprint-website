@@ -149,9 +149,6 @@ export function Hero() {
               </div>
             </div>
           )}
-          <p className="stage-label micro" aria-hidden="true">
-            {hasLogo ? "Your logo · live 3D preview" : "Placeholder logo · live 3D preview"}
-          </p>
         </div>
         <div className="beats" ref={beatsRef}>
           {BEATS.map((b, i) => (

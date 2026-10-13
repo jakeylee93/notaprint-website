@@ -8,10 +8,13 @@ import { LogoChip } from "./LogoChip";
 import { useArtwork } from "@/state/artwork";
 import { useBasket } from "@/state/basket";
 
-export function Wordmark() {
+export function Wordmark({ size = 34 }: { size?: number }) {
   return (
-    <span className="wordmark" aria-label="Nota Print">
-      Nota <em>Print</em>
+    <span className="wordmark">
+      {/* Genuine Nota mark, original source pixels (no redraw). The name is plain interface type, not brand lettering. */}
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img className="wordmark-mark" src="/brand/nota-mark.png" alt="" width={size} height={size} />
+      <span>Nota Print</span>
     </span>
   );
 }

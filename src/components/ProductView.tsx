@@ -117,7 +117,6 @@ export function ProductView({ product }: { product: Product }) {
               </div>
             </div>
           )}
-          {viewerState === "ready" && <span className="viewer-hint">Drag to rotate · pinch to zoom</span>}
         </div>
         <div className="view-controls" aria-label="View controls">
           <button type="button" className="text-button" onClick={() => viewerRef.current?.rotateBy(-30)} disabled={viewerState !== "ready"}>

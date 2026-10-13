@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Wordmark } from "./Header";
 import { PRICING_CONFIG } from "@/lib/pricing/config";
 
 export function Footer() {
@@ -7,9 +8,7 @@ export function Footer() {
       <div className="container">
         <div className="footer-grid">
           <div className="stack-m">
-            <span className="wordmark">
-              Nota <em>Print</em>
-            </span>
+            <Wordmark size={56} />
             <p className="muted small" style={{ maxWidth: "36ch", margin: 0 }}>
               Your logo on real products, proofed to the millimetre. Made to order, or in trade quantities.
             </p>

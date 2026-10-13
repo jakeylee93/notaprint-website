@@ -40,6 +40,7 @@ This is a plan to rebuild Jake's print, merchandise and POS shop at **notaprint.
 | 06 | [Phased plan](06-phased-plan.md): phases with **acceptance criteria**, mug slice first | D15, D16 |
 | 07 | [Research notes](07-research-notes.md): verified facts and source URLs (Stripe, Printify, Laltex, uploads, Printful, 3D) | n/a |
 | 08 | [Build status](08-build-status.md): the working preview, honest demo labels, verification results, how to turn on Stripe test, **remaining launch dependencies** | Launch dependencies |
+| 09 | [Asset audit](09-asset-audit.md): every asset checked against the durable [project rules](PROJECT-RULES.md) | n/a |
 | — | [Evidence](evidence/): live-site fold screenshots, the logo source, legacy commit history; [`evidence/build/`](evidence/build/) has screenshots and motion contact sheets of the new build, using synthetic logos only. No third-party images, because the repo is public | n/a |
 
 ## Decisions (status after the build go-ahead)

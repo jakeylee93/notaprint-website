@@ -20,7 +20,7 @@ export const metadata: Metadata = {
   description: "Upload your logo once and see it on real products in true 3D. Proof it to the millimetre, then order made to order or in trade quantities.",
   // Preview build: keep it out of search indexes.
   robots: { index: false, follow: false },
-  icons: { icon: "/icon.svg" },
+  icons: { icon: "/brand/nota-mark.png", apple: "/brand/nota-mark.png" },
 };
 
 export const viewport: Viewport = {

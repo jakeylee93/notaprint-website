@@ -46,7 +46,7 @@
 | Trade items | **Prototype previews**: procedural shapes, unverified colours, provisional print areas, "Trade quote · Indicative" | `products.ts` |
 | 3D models | Original procedural meshes at published dimensions, **not supplier geometry**. Each product page says so | `src/three/models.ts` |
 | Proof vs print master | The composed canvas is a **web preview** (≤ 2048 px, 9 px/mm). **No print master is generated yet.** The proof says it is not the production file | `src/lib/artwork/compose.ts` |
-| Brand | Typographic interim wordmark "Nota *Print*" until a vector master exists | `src/components/Header.tsx` |
+| Brand | Genuine Nota mark from the original source pixels, with the name in interface type. A vector master is still needed | `src/components/Header.tsx` |
 | Indexing | `robots: noindex, nofollow` on every page | `src/app/layout.tsx` |
 
 ## How it is built
