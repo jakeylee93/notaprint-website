@@ -1,13 +1,13 @@
 import { expect, test } from "@playwright/test";
-import { currentArtworkId, expectLogoReady, freshStart, shot, uploadLogo, waitForHero3D, waitForPersonalisedGrid } from "./helpers";
+import { currentArtworkId, expectLogoReady, freshStart, shot, uploadLogo } from "./helpers";
 
 const isDesktop = (name: string) => name === "desktop";
 
 test.describe("upload once → every product → 3D → proof → basket", () => {
   test("core flow with persistence", async ({ page }, info) => {
     await freshStart(page);
-    await waitForHero3D(page);
-    await expect(page.getByRole("heading", { level: 1 })).toHaveText("Upload your logo.");
+    await expect(page.getByTestId("rail")).toBeVisible();
+    await expect(page.getByTestId("rail-name")).not.toBeEmpty();
     await shot(page, info, "01-home");
 
     // Upload once (PNG with transparency).
@@ -16,14 +16,12 @@ test.describe("upload once → every product → 3D → proof → basket", () =>
     const artworkId = await currentArtworkId(page);
     expect(artworkId).toMatch(/^[a-f0-9]{32}$/);
 
-    // The same logo appears on every product in the grid.
-    await page.locator("#products").scrollIntoViewIfNeeded();
-    await waitForPersonalisedGrid(page, ["mug", "pen", "bottle", "tote", "notebook", "cards"], artworkId!);
-    await page.locator("#products").scrollIntoViewIfNeeded();
-    await shot(page, info, "02-personalised-grid");
+    // The mug is the product with a calibrated 3D model: open it from the rail.
+    await page.getByTestId("filter-drinkware").click();
+    await page.getByTestId("rail-open").click();
+    await page.getByRole("link", { name: "Open in 3D" }).click();
 
     // Real 3D mug: rotate with keyboard and with the on-screen buttons.
-    await page.getByTestId("card-mug").click();
     const viewer = page.getByTestId("viewer");
     await expect(viewer).toHaveAttribute("data-state", "ready", { timeout: 45_000 });
     await page.waitForTimeout(1200);
@@ -157,21 +155,29 @@ test.describe("artwork intake safety", () => {
 });
 
 test.describe("catalogue, trade quotes, motion and fallbacks", () => {
-  test("filters, sort and quantity pricing", async ({ page }, info) => {
-    test.skip(!isDesktop(info.project.name), "desktop only");
+  test("rail: filters, real colours and placements", async ({ page }, info) => {
+    test.skip(!isDesktop(info.project.name) && info.project.name !== "mobile-390", "covered on desktop and one phone");
     await freshStart(page);
-    await page.locator("#products").scrollIntoViewIfNeeded();
-    await page.getByRole("group", { name: "How it's made" }).getByRole("button", { name: "Trade quantities" }).click();
-    await expect(page.getByTestId("card-mug")).toHaveCount(0);
-    await expect(page.getByTestId("card-pen")).toBeVisible();
-    await page.getByRole("group", { name: "How it's made" }).getByRole("button", { name: "Any" }).click();
-    await page.getByRole("group", { name: "Quantity for pricing" }).getByRole("button", { name: "500" }).click();
-    await expect(page.getByTestId("card-pen")).toContainText("£0.58 each at 500");
-    await page.locator("#product-sort").selectOption("price-asc");
-    const order = await page.locator('[data-testid^="card-"]').evaluateAll((els) => els.map((e) => e.getAttribute("data-testid")));
-    expect(order[0]).toBe("card-cards");
-    await page.getByLabel("Search products").fill("bottle");
-    await expect(page.locator('[data-testid^="card-"]')).toHaveCount(1);
+    const items = page.getByTestId("rail").locator(".rail-item");
+    await expect(items).toHaveCount(7);
+    await page.getByTestId("filter-tees").click();
+    await expect(items).toHaveCount(2);
+    await page.getByTestId("filter-caps").click();
+    await expect(items).toHaveCount(1);
+    await expect(page.getByTestId("rail-name")).toHaveText("Sunwashed Cap");
+    const img = items.first().locator("img");
+    const before = await img.getAttribute("src");
+    await page.getByRole("group", { name: "Colour" }).getByRole("button").nth(2).click();
+    await expect(img).not.toHaveAttribute("src", before!);
+    await page.getByTestId("rail-open").click();
+    await expect(page.getByRole("group", { name: "Logo position" }).getByRole("button")).toHaveText(["Front (embroidered)", "Left side", "Right side", "Back"]);
+    await page.getByTestId("filter-hoodies").click();
+    await page.getByTestId("rail").focus();
+    await page.keyboard.press("ArrowRight");
+    await expect(page.getByTestId("rail-name")).toHaveText("Oversized Heavyweight Hoodie");
+    await page.keyboard.press("ArrowLeft");
+    await expect(page.getByTestId("rail-name")).toHaveText("Premium Pullover Hoodie");
+    await shot(page, info, "02-rail");
   });
 
   test("trade item → proof → prepared quote (never sent)", async ({ page }, info) => {
@@ -193,16 +199,13 @@ test.describe("catalogue, trade quotes, motion and fallbacks", () => {
     await shot(page, info, "08-trade-quote");
   });
 
-  test("reduced motion: no scroll-scrubbed stage, static composed frame", async ({ browser }, info) => {
+  test("reduced motion: rail items do not animate", async ({ browser }, info) => {
     test.skip(!isDesktop(info.project.name) && info.project.name !== "mobile-390", "covered on desktop and one phone");
     const context = await browser.newContext({ ...info.project.use, reducedMotion: "reduce" });
     const page = await context.newPage();
     await page.goto("/");
-    await waitForHero3D(page);
-    const position = await page.locator(".hero-stage").evaluate((el) => getComputedStyle(el).position);
-    expect(position).not.toBe("sticky");
-    await page.waitForTimeout(1500);
-    await page.screenshot({ path: `tests/e2e/.artifacts/evidence/${info.project.name}-09-reduced-motion.png` });
+    const duration = await page.locator(".rail-item").first().evaluate((el) => getComputedStyle(el).transitionDuration);
+    expect(duration).toBe("0s");
     await context.close();
   });
 
@@ -220,8 +223,6 @@ test.describe("catalogue, trade quotes, motion and fallbacks", () => {
       });
     });
     const page = await context.newPage();
-    await page.goto("/");
-    await expect(page.getByTestId("hero-stage")).toHaveAttribute("data-mode", "fallback");
     await page.goto("/products/white-glossy-mug");
     await expect(page.getByTestId("viewer")).toHaveAttribute("data-state", "fallback");
     await expect(page.getByText("3D preview isn't available on this device")).toBeVisible();

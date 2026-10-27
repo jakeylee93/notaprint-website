@@ -8,7 +8,7 @@ import { LogoChip } from "./LogoChip";
 import { useArtwork } from "@/state/artwork";
 import { useBasket } from "@/state/basket";
 
-export function Wordmark({ size = 34 }: { size?: number }) {
+export function Wordmark({ size = 26 }: { size?: number }) {
   return (
     <span className="wordmark">
       {/* Genuine Nota mark, original source pixels (no redraw). The name is plain interface type, not brand lettering. */}
@@ -37,9 +37,8 @@ export function Header() {
   }, [open]);
 
   const nav = [
-    { href: "/#products", label: "Products" },
-    { href: "/#trade", label: "Trade" },
-    { href: "/#proof", label: "How it works" },
+    { href: "/#shop", label: "Shop" },
+    { href: "/quote", label: quoteCount > 0 ? `Trade (${quoteCount})` : "Trade" },
   ];
 
   return (
@@ -54,18 +53,13 @@ export function Header() {
               {n.label}
             </Link>
           ))}
-          {quoteCount > 0 && <Link href="/quote">Quote ({quoteCount})</Link>}
         </nav>
         <div className="header-actions">
           {artwork.artwork ? (
             <LogoChip compact />
           ) : (
-            <button type="button" className="btn btn-primary btn-small" onClick={openFilePicker} disabled={artwork.status === "processing"} data-testid="header-upload">
-              {artwork.status === "processing" ? "Preparing…" : (
-                <>
-                  Upload<span className="label-wide">&nbsp;your logo</span>
-                </>
-              )}
+            <button type="button" className="header-upload" onClick={openFilePicker} disabled={artwork.status === "processing"} data-testid="header-upload">
+              {artwork.status === "processing" ? "Preparing…" : "Add your logo"}
             </button>
           )}
           <Link className="basket-link" href="/basket" aria-label={`Basket, ${count} ${count === 1 ? "item" : "items"}`} data-testid="basket-link">
@@ -90,11 +84,6 @@ export function Header() {
           <Link href="/basket" onClick={() => setOpen(false)}>
             Basket ({count})
           </Link>
-          {quoteCount > 0 && (
-            <Link href="/quote" onClick={() => setOpen(false)}>
-              Trade quote ({quoteCount})
-            </Link>
-          )}
         </nav>
       )}
     </header>

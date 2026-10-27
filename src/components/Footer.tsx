@@ -14,9 +14,8 @@ export function Footer() {
             </p>
           </div>
           <nav className="footer-links" aria-label="Shop">
-            <Link href="/#products">Products</Link>
-            <Link href="/#trade">Trade quantities</Link>
-            <Link href="/#proof">Proof before print</Link>
+            <Link href="/#shop">Shop</Link>
+            <Link href="/quote">Trade quantities</Link>
           </nav>
           <nav className="footer-links" aria-label="Your order">
             <Link href="/basket">Basket</Link>
@@ -24,8 +23,7 @@ export function Footer() {
           </nav>
         </div>
         <p className="preview-note">
-          Preview build. {PRICING_CONFIG.vatNote} Checkout runs in Stripe test mode only, and no supplier orders are ever placed. 3D views use original
-          prototype models. Uploaded logos are processed and stored on your device only.
+          Preview build. {PRICING_CONFIG.vatNote} Checkout runs in Stripe test mode only, and no supplier orders are ever placed. The mug is shown in real 3D; other products use Printful&apos;s own catalogue photography until their 3D models are ready. Uploaded logos stay on your device.
         </p>
       </div>
     </footer>
