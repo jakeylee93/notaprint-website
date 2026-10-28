@@ -42,3 +42,23 @@ Jake's brief: a much more minimal site, a better header, then straight into a ca
   - Add both as environment secrets: cloud environment settings → Edit → Network secrets.
   - Tripo spend stays within Jake's existing credits. No top-ups.
 - Real-phone checking of swipe on the rail.
+
+## Printful access check (28 Oct 2026, preview `5265522`, `dpl_8yUBhspm4gaWV9v6bg93LX6Mnez1`)
+- **How it's wired:**
+  - The single-store Notaprint token is stored as `PRINTFUL_API_TOKEN` on the Vercel project, scoped to branch `claude/zen-newton-he9byr`. Jake added it; it never appears in the repo, chat or container.
+  - It is read only by the server-only route `GET /api/printful/check`. That route answers only on preview deployments (behind Vercel Authentication) and returns 404 everywhere else.
+  - It makes GET requests only. The token is never echoed. Store-scoped reads report a status code only.
+
+| Read | Result |
+|---|---|
+| Print files, Premium Pullover Hoodie (380) | ✅ 200. Front 1800×1800 px @ 150 dpi (12 × 12 in), back 1800×2400 @ 150 (12 × 16 in), sleeves 450×1800 @ 150, labels, wrists |
+| Mockup templates, 380 (v1) | ✅ 200. 207 templates with exact print-area rectangles, e.g. front: 1049×1049 at (985, 565) on a 3000×3000 template |
+| Print files and templates, White Glossy Mug (19) | ✅ 200. Print file 2700×1050 px @ 300 dpi = **228.6 × 88.9 mm**. Template print area 671×261 at (29, 163) on 728×728 |
+| v2 catalogue mockup templates (380, 19) | ✅ 200 |
+| Stores list | ✅ 200 (contents not read or shown) |
+| Store products (`/store/products`) | ❌ 400. Only applies to Manual Order / API platform stores, and Notaprint isn't one. Not needed for the rail |
+| File library (v1 `/files`) | ❌ 410. Permanently removed by Printful; v2 `/v2/files` replaces it. Not needed for reading |
+
+**Findings**
+- **Chest placements need a technique filter.** The default print-file listing for 380 doesn't include the embroidered chest placements. Those must be requested with the embroidery technique filter, which is the next read to add.
+- **The mug's provisional print area is wrong.** It was 200 × 80 mm. Printful's real print file is **228.6 × 88.9 mm**, which must be corrected before any production proof.
